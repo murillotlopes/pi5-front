@@ -2,30 +2,32 @@ import React, { useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
 import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import colors from './colors'
+import apiFinance from '../services/apiFinance';
 
 const User = () => {
   const [nome, setNome] = useState('');
   const [email, setEmail] = useState('');
-  const [senha1, setSenha1] = useState('');
-  const [senha2, setSenha2] = useState('');
-  
-
+  const [senha, setSenha] = useState('');
+  const [confirmacaoSenha, setConfirmacaoSenha] = useState('');
 
   const navigation = useNavigation();
 
   const handleUser = () => {
-    if(nome === ''){
-        alert('Insira nome!')
+    if (nome === '' || email === '' || senha === '' || confirmacaoSenha === '') {
+      alert('Preencha todos os dados para cadastro!')
+    } else if (senha !== confirmacaoSenha) {
+      alert('Senhas não conferem!')
     } else {
-        //Rotina de gravação de dados e retorno a pagina principal
+      if (apiFinance.usuarioCriar({ nome, email, senha })) {
         alert('Usuário Cadastrado com sucesso!')
         navigation.navigate('login')
+      }
     }
   };
 
   const Cancelar = () => {
-        navigation.navigate('login')
-   };
+    navigation.navigate('login')
+  };
 
   return (
     <View style={styles.container}>
@@ -36,23 +38,25 @@ const User = () => {
         onChangeText={setNome}
       />
       <TextInput
-      style={styles.input}
-      placeholder="E-mail"
-      value={email}
-      onChangeText={setEmail}
-      />      
+        style={styles.input}
+        placeholder="E-mail"
+        value={email}
+        onChangeText={setEmail}
+      />
       <TextInput
-      style={styles.input}
-      placeholder="Senha"
-      value={senha1}
-      onChangeText={setSenha1}
-      />      
+        style={styles.input}
+        placeholder="Senha"
+        secureTextEntry={true}
+        value={senha}
+        onChangeText={setSenha}
+      />
       <TextInput
-      style={styles.input}
-      placeholder="Confirmar Senha"
-      value={senha2}
-      onChangeText={setSenha2}
-      />      
+        style={styles.input}
+        placeholder="Confirmar Senha"
+        secureTextEntry={true}
+        value={confirmacaoSenha}
+        onChangeText={setConfirmacaoSenha}
+      />
       <TouchableOpacity style={styles.button} onPress={handleUser}>
         <Text style={styles.buttonText}>Confirmar</Text>
       </TouchableOpacity>
@@ -72,8 +76,8 @@ const styles = StyleSheet.create({
   },
   input: {
     borderWidth: 1,
-    borderColor: colors.borderColor,
-    backgroundColor: colors.textFundo,
+    borderColor: colors.bordaTextInput,
+    backgroundColor: colors.fundoTextInput,
     borderRadius: 5,
     padding: 10,
     marginVertical: 10,

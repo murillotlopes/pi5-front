@@ -1,19 +1,25 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigation } from '@react-navigation/native';
-import { StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
+import { Image, StyleSheet, Text, View, TextInput, TouchableOpacity } from 'react-native';
 import colors from './colors';
+import apiFinance from '../services/apiFinance';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Login = () => {
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-
-
+  const [senha, setSenha] = useState('');
+  const token = AsyncStorage.getItem('token')
 
   const navigation = useNavigation();
 
+  // if (token) {
+  //   navigation.navigate('MeusAtivos')
+  // }
+
   const handleLogin = () => {
-    if (email === '' && password === '') {
-      navigation.navigate('Meus Ativos')
+    if (apiFinance.usuarioLogin({ email, senha })) {
+      alert('Bem vindo')
+      navigation.navigate('MeusAtivos')
     } else {
       alert('Email ou senha inválidos!')
     }
@@ -26,6 +32,12 @@ const Login = () => {
   return (
     <View style={styles.container}>
 
+      <Image
+        source={require('../resources/logo.jpeg')} // ou source={{ uri: 'https://exemplo.com/imagem.jpg' }}
+        style={{ width: 200, height: 200, marginBottom: 50 }}
+      />
+
+
       <TextInput
         style={styles.input}
         placeholder="E-mail"
@@ -36,8 +48,8 @@ const Login = () => {
         style={styles.input}
         placeholder="Senha"
         secureTextEntry={true}
-        value={password}
-        onChangeText={setPassword}
+        value={senha}
+        onChangeText={setSenha}
       />
 
       <TouchableOpacity style={styles.button} onPress={handleLogin}>
